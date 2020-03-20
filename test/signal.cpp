@@ -125,7 +125,7 @@ int main()
         scoped_any_connection conn = o.after_change
             ([&called](std::string){called = true;});
         auto o2 = std::move(o);
-        conn.~scoped_connection();
+        conn = scoped_any_connection{};
         o2 = "abc";
         assert(!called);
     }
