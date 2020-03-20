@@ -59,6 +59,8 @@ before_install:
     mkdir -p /home/travis/lib/boost
     tar xzf boost.tar.gz --strip-components=1 -C /home/travis/lib/boost
     rm -f boost.tar.gz
+    cd /home/travis/lib/boost/tools/build
+    ./bootstrap.sh && ./b2 install --prefix=/home/travis/lib
 
 notifications:
   email: false
