@@ -15,19 +15,34 @@
 #include "coruja/support/signal/any_connection.hpp"
 #include "coruja/support/signal/any_signal_id_t.hpp"
 #include "coruja/support/type_traits.hpp"
-#include "range/v3/view/any_view.hpp"
+#include "coruja/view.hpp"
+#include <range/v3/view/any_view.hpp>
 #include <range/v3/range_traits.hpp>
 
 
 namespace coruja { namespace view {
+
+namespace detail{
+//Note: This is a workaround to avoid a build error which
+//shows an ambiguity when we call
+//ranges::next(It, ranges::iterator_difference_t<It>).
+template<typename It>
+It next(It it, ranges::iterator_difference_t<It> n)
+{
+    for(; n > 0; --n)
+        ++it;
+    return it;
+}
+
+}
 
 template<typename T, ranges::category Cat = ranges::category::input>
 class any_container : public ranges::any_view<T, Cat>
 {
     using base_view = ranges::any_view<T, Cat>;
 public:
+    using value_type = T;
     using iterator = ranges::range_iterator_t<base_view>;
-    using value_type = typename std::decay<T>::type;
     using for_each_connection_t = any_connection;
     using before_erase_connection_t = any_connection;
 private:
@@ -45,14 +60,13 @@ private:
     };
 
     struct wrap_invoker
-    {
+    {       
         template<typename From, typename It>
         void operator()(From& from, It it) 
         {
-            using namespace ranges;
-            auto dist = distance(begin(from), it);
+            auto dist = ranges::distance(ranges::begin(from), it);
             auto rng = any_container{from};
-             _f(rng, next(begin(rng), dist));
+            _f(rng, detail::next(ranges::begin(rng), dist));
         }
 
         std::function<void(any_container&,iterator)> _f;

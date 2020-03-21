@@ -69,8 +69,8 @@ enable_if_t<
     !is_view<ObservableObject>::value,
     object<ObservableObject>
 >
-view(ObservableObject& rng)
-{ return {rng}; }
+view(ObservableObject& obj)
+{ return {obj}; }
     
 template<typename ObservableObject>
 inline
@@ -78,7 +78,8 @@ enable_if_t<
     is_view<remove_reference_t<ObservableObject>>::value,
     remove_reference_t<ObservableObject>
 >
-view(ObservableObject&& rng)
-{ return std::forward<ObservableObject>(rng); }
+view(ObservableObject&& obj)
+{ return std::forward<ObservableObject>(obj); }
+
 
 }}

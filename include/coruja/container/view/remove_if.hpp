@@ -19,6 +19,7 @@
 #include "coruja/container/view/container.hpp"
 #include "coruja/support/type_traits.hpp"
 #include "coruja/support/signal/signal_id_t.hpp"
+#include "coruja/view.hpp"
 
 template<typename ObservableErasableRange, typename Pred>
 struct coruja_remove_if_view : ranges::view_facade<

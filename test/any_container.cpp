@@ -3,8 +3,12 @@
 // (See accompanying file LICENSE or copy at
 //  http://www.boost.org/LICENSE_1_0.txt)
 
+#include <coruja/object/object.hpp>
+#include <coruja/object/view/any_object.hpp>
+#include <coruja/object/view/object.hpp>
 #include <coruja/container/view/any_container.hpp>
 #include <coruja/container/vector.hpp>
+#include <coruja/container/list.hpp>
 #include <coruja/container/map.hpp>
 #include <coruja/container/view/filter.hpp>
 #include <coruja/container/view/transform.hpp>
@@ -13,6 +17,7 @@
 #include <sstream>
 
 #include "run_container.hpp"
+#include "check_equal.hpp"
 
 using namespace coruja;
 
@@ -24,6 +29,8 @@ using sivec = vec<std::pair<std::string, int>>;
 
 using ivector = vector<int>;
 using svector = vector<std::string>;
+using ilist = list<int>;
+using slist = list<std::string>;
 using simap = map<std::string,int>;
 using iany_t = view::any_container<int>;
 using sany_t = view::any_container<std::string>;
@@ -31,6 +38,14 @@ using siany_t = view::any_container<std::pair<std::string,int>>;
 
 template<typename Cont>
 struct Change;
+
+template<>
+struct Change<void>
+{
+    template<typename V>
+    V& operator()(V& c)
+    { return c; }
+};
 
 template<typename T>
 struct Change<vector<T>>
@@ -91,6 +106,26 @@ int main()
     {
         iany_t iany;
         siany_t siany;
+    }
+
+    //from vector range
+    {
+        ivector originator = { 1, 3, 5, 7, 9};
+        iany_t any(originator);
+        
+        check_equal(any, originator);
+
+        svector originator2 = { "1", "3", "5", "7", "9"};
+        sany_t any2(originator2);
+        check_equal(any2, originator2);
+    }
+
+    //from list range
+    {
+        ilist originator = { 1, 3, 5, 7, 9};
+        iany_t any(originator);
+        
+        check_equal(any, {1,3,5,7,9});
     }
 
     //from vector
@@ -184,6 +219,43 @@ int main()
        ivec erased_expected = {9};
 
        run_view(any, expected_foreach, change(originator, keys_toRemove), erased_expected);
+   }
+
+   {
+       list<object<int>> list;
+       
+       iany_t any(view::transform(list, [](object<int>& o) { return o.observed(); }));
+
+       check_equal(any, list);
+   }
+
+   {
+       list<object<int>> list;
+       list.emplace_back(1);
+       list.emplace_back(2);
+       
+       view::any_container<view::object<object<int>>> any;
+
+       auto trans = view::transform(list, [](object<int>& o) { return view::view(o); });
+       any = trans;
+
+       check_equal(any, list);
+   }
+
+   {
+       list<object<int>> list;
+       list.emplace_back(1);
+       list.emplace_back(2);
+       
+       view::any_container<view::any_object<int>> any;
+
+       auto trans = view::transform(list, [](object<int>& o) { return view::any_object<int>(o); });
+       any = trans;
+
+       check_equal(any, list);
+       ivec expected_foreach = { 1, 2};
+
+       run_view(any, expected_foreach);
    }
 
     return 0;

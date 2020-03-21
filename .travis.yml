@@ -14,10 +14,11 @@ env:
   global:
     - BOOST_ROOT=/home/travis/lib/boost
     - RANGE_V3_ROOT=/home/travis/lib/range-v3
+    - STD_FLAG=c++11
 
 script: 
   - cd $TRAVIS_BUILD_DIR
-  - /home/travis/lib/bin/b2 toolset=gcc -j2 
+  - /home/travis/lib/bin/b2 toolset=gcc cxxflags="-std=$STD_FLAG" -j2
 
 matrix:
   include:
@@ -27,21 +28,41 @@ matrix:
       install:
         - sudo apt-get install -y g++-5
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-5 60 --slave /usr/bin/g++ g++ /usr/bin/g++-5
+      env:
+        - STD_FLAG=c++11
+        - STD_FLAG=c++14
       
     - name: "g++-6"
       install:
         - sudo apt-get install -y g++-6
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-6 60 --slave /usr/bin/g++ g++ /usr/bin/g++-6
+      env:
+        - STD_FLAG=c++11
+        - STD_FLAG=c++14
 
     - name: "g++-7"
       install:
         - sudo apt-get install -y g++-7
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+      env:
+        - STD_FLAG=c++11
+        - STD_FLAG=c++17
 
     - name: "g++-8"
       install:
         - sudo apt-get install -y g++-8
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-8
+      env:
+        - STD_FLAG=c++11
+        - STD_FLAG=c++17
+
+    - name: "g++-9"
+      install:
+        - sudo apt-get install -y g++-9
+        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
+      env:
+        - STD_FLAG=c++11
+        - STD_FLAG=c++17
 
 before_install:
   - mkdir -p /tmp/deps
