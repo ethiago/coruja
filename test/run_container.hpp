@@ -5,6 +5,8 @@
 #include <boost/core/lightweight_test.hpp>
 #include <coruja/support/type_traits.hpp>
 #include <coruja/support/signal/any_connection.hpp>
+#include <coruja/object/view/any_object.hpp>
+
 #include <range/v3/range_traits.hpp>
 
 #include <initializer_list>
@@ -31,6 +33,18 @@ inline
 typename std::enable_if<is_sequence_container<C>::value>::type
 emplace(C& c, typename C::value_type e)
 { c.emplace_back(std::move(e)); }
+
+template<typename C, typename T>
+inline
+typename std::enable_if<!is_sequence_container<C>::value>::type
+emplace(C& c, coruja::view::any_object<T> e)
+{ c.emplace(e.observed()); }
+
+template<typename C, typename T>
+inline
+typename std::enable_if<is_sequence_container<C>::value>::type
+emplace(C& c, coruja::view::any_object<T> e)
+{ c.emplace_back(e.observed()); }
 
 template<typename C>
 inline
@@ -152,4 +166,4 @@ void run_view(View pvec, E for_each_expected, F&& f, E erased_expected)
 
 template<typename View, typename F = F_<View>, typename E >
 void run_view(View pvec, E for_each_expected, F&& f = F_<View>{})
-{ run_view(std::move(pvec), std::move(for_each_expected), std::move(f), E{}, E{}); }
+{ run_view(std::move(pvec), std::move(for_each_expected), std::move(f), E{}); }
