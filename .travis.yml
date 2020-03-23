@@ -14,15 +14,14 @@ env:
   global:
     - BOOST_ROOT=/home/travis/lib/boost
     - RANGE_V3_ROOT=/home/travis/lib/range-v3
+    - STD_FLAG=c++14
 
 script: 
   - cd $TRAVIS_BUILD_DIR
-  - /home/travis/lib/bin/b2 toolset=gcc -j2 
+  - /home/travis/lib/bin/b2 toolset=gcc cxxflags="-std=$STD_FLAG" -j2
 
 matrix:
   include:
-    - name: "g++-4.8"
-  
     - name: "g++-5"
       install:
         - sudo apt-get install -y g++-5
@@ -37,18 +36,32 @@ matrix:
       install:
         - sudo apt-get install -y g++-7
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 --slave /usr/bin/g++ g++ /usr/bin/g++-7
+      env:
+        - STD_FLAG=c++14
+        - STD_FLAG=c++17
 
     - name: "g++-8"
       install:
         - sudo apt-get install -y g++-8
         - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-8 60 --slave /usr/bin/g++ g++ /usr/bin/g++-8
+      env:
+        - STD_FLAG=c++14
+        - STD_FLAG=c++17
+
+    - name: "g++-9"
+      install:
+        - sudo apt-get install -y g++-9
+        - sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 60 --slave /usr/bin/g++ g++ /usr/bin/g++-9
+      env:
+        - STD_FLAG=c++14
+        - STD_FLAG=c++17
 
 before_install:
   - mkdir -p /tmp/deps
   - |
     echo "Installing range-v3"
     cd /tmp/deps
-    wget https://github.com/ericniebler/range-v3/archive/0.1.1.tar.gz -O range-v3.tar.gz
+    wget https://github.com/ericniebler/range-v3/archive/0.5.0.tar.gz -O range-v3.tar.gz
     mkdir -p /home/travis/lib/range-v3
     tar xzf range-v3.tar.gz --strip-components=1 -C /home/travis/lib/range-v3
     rm -f range-v3.tar.gz

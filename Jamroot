@@ -31,7 +31,7 @@ project coruja
   : requirements
     <include>include
     <include>test
-    <cxxflags>-std=c++11
+    <cxxflags>-std=c++14
     <use>/boost//headers
     <include>$(range-v3_path)/include
   : default-build
