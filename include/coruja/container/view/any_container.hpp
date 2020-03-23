@@ -15,7 +15,8 @@
 #include "coruja/support/signal/any_connection.hpp"
 #include "coruja/support/signal/any_signal_id_t.hpp"
 #include "coruja/support/type_traits.hpp"
-#include "range/v3/view/any_view.hpp"
+#include "coruja/view.hpp"
+#include <range/v3/view/any_view.hpp>
 #include <range/v3/range_traits.hpp>
 
 
