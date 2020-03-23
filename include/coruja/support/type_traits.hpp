@@ -8,6 +8,7 @@
 
 #include <type_traits>
 #include <boost/hof/is_invocable.hpp>
+#include <range/v3/begin_end.hpp>
 #include <range/v3/range_concepts.hpp>
 
 namespace coruja { 
@@ -156,16 +157,16 @@ struct is_observable_erasable_range<T, void_t<
     decltype(
         std::declval<typename T::for_each_connection_t&>() =
         std::declval<T&>().for_each
-        (std::declval<void(*)(T&, decltype(begin(std::declval<T>())))>()),
+        (std::declval<void(*)(T&, decltype(ranges::begin(std::declval<T>())))>()),
         std::declval<typename T::for_each_connection_t&>() =
         std::declval<T&>().for_each
-        (std::declval<void(*)(decltype(*begin(std::declval<T>())))>()),
+        (std::declval<void(*)(decltype(*ranges::begin(std::declval<T>())))>()),
         std::declval<typename T::before_erase_connection_t&>() =
-             std::declval<T>().before_erase
-             (std::declval<void(*)(T&, decltype(begin(std::declval<T>())))>()),
+        std::declval<T>().before_erase
+        (std::declval<void(*)(T&, decltype(ranges::begin(std::declval<T>())))>()),
         std::declval<typename T::before_erase_connection_t&>() =
         std::declval<T&>().before_erase
-        (std::declval<void(*)(decltype(*begin(std::declval<T>())))>()),
+        (std::declval<void(*)(decltype(*ranges::begin(std::declval<T>())))>()),
         (void)0)
     >
 > : std::integral_constant<bool,
