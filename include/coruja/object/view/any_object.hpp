@@ -13,6 +13,7 @@
 #include "coruja/support/signal/any_signal_id_t.hpp"
 #include "coruja/support/signal/scoped_connection.hpp"
 #include "coruja/support/type_traits.hpp"
+#include "coruja/view.hpp"
 
 #include <functional>
 #include <memory>
@@ -170,8 +171,8 @@ public:
                      any_object>::value
                  >>
     any_object(ObservableObject&& o)
-        : _model(new model_t<ObservableObject, DisconnectOnDestruction_>
-                 (std::forward<ObservableObject>(o)))
+        : _model(new model_t<view_t<ObservableObject>, DisconnectOnDestruction_>
+                 (view(std::forward<ObservableObject>(o))))
     {}
 
     any_object(const any_object& rhs)
