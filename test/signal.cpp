@@ -121,11 +121,13 @@ int main()
     {
         using obj_t = object<std::string>;
         obj_t o;
+	obj_t o2;
         bool called(false);
-        scoped_any_connection conn = o.after_change
-            ([&called](std::string){called = true;});
-        auto o2 = std::move(o);
-        conn.~scoped_connection();
+        {
+            scoped_any_connection conn = o.after_change
+                ([&called](std::string){called = true;});
+            o2 = std::move(o);
+        }
         o2 = "abc";
         assert(!called);
     }
